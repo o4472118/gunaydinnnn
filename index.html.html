@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Günaydın prenses</title>
+<style>
+  :root{--bg:#071224;--accent:#ff4da6;--text:#fff}
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+  body{background:linear-gradient(135deg,#071224 0%, #0b2a3f 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--text)}
+  .card{position:relative;padding:36px 28px;border-radius:16px;text-align:center;backdrop-filter: blur(6px);max-width:920px;width:92%;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+  h1{font-size:clamp(28px,6vw,52px);margin:16px 0 12px;letter-spacing:0.6px;opacity:0;transition:opacity 0.6s ease-out}
+  .heart-btn{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#ff6fb7);color:#111;font-weight:700;text-decoration:none;box-shadow:0 8px 30px rgba(255,77,166,0.18);font-size:28px;border:none;cursor:pointer}
+  .hearts{pointer-events:none;position:absolute;inset:0;overflow:visible}
+  .heart{position:absolute;bottom:20%;left:50%;transform-origin:center;opacity:0;will-change:transform,opacity}
+  .heart svg{width:46px;height:46px;display:block;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.35))}
+  @keyframes rise {
+    0% { transform: translate(-50%,0) scale(0.6) rotate(0deg); opacity:1; }
+    35% { opacity:1; }
+    100% { transform: translate(-50%,-420px) scale(1.2) rotate(30deg); opacity:0; }
+  }
+</style>
+</head>
+<body>
+<div class="card" role="main" aria-label="Günaydın mesajı">
+  <button class="heart-btn" id="heartBtn" aria-label="Kalp 💖">💖</button>
+  <h1 id="greetingText">Günaydın prenses 🌞💖</h1>
+  <div class="hearts" id="heartsRoot"></div>
+</div>
+
+<script>
+const heartBtn = document.getElementById('heartBtn');
+const heartsRoot = document.getElementById('heartsRoot');
+const greetingText = document.getElementById('greetingText');
+const colors = ['#ff4da6','#ff7abf','#ffd166','#ff6b6b','#ff9ee3'];
+
+// spawn a single heart at a horizontal position
+function spawnHeart(xPercent) {
+  const el = document.createElement('div');
+  el.className = 'heart';
+  const leftVary = (Math.random()*60 - 30);
+  el.style.left = `calc(${xPercent}% + ${leftVary}px)`;
+  el.style.bottom = `${20 + Math.random()*12}%`;
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  el.innerHTML = `<svg viewBox="0 0 24 24" fill="${color}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-8.2C-0.2 9.6 2.2 5 5.9 5 8.1 5 9.6 6.4 12 8.4 14.4 6.4 15.9 5 18.1 5c3.7 0 6.1 4.6 3.9 7.8C19.5 16.4 12 21 12 21z"/></svg>`;
+  const dur = 2000 + Math.random()*1200;
+  el.style.animation = `rise ${dur}ms cubic-bezier(.2,.7,.2,1) forwards`;
+  el.style.transform = `translate(-50%,0) scale(${0.8 + Math.random()*0.7}) rotate(${Math.random()*40 - 20}deg)`;
+  heartsRoot.appendChild(el);
+  setTimeout(()=> el.remove(), dur + 50);
+}
+
+// burst of hearts
+function burst(count=14) {
+  for(let i=0;i<count;i++){
+    setTimeout(()=> spawnHeart(50 + (Math.random()*40 - 20)), i*60);
+  }
+}
+
+heartBtn.addEventListener('click', ()=>{
+  // Hide button after click
+  heartBtn.style.display = 'none';
+  // Fire hearts bursts
+  for(let t=0;t<4;t++){ setTimeout(()=> burst(12), t*600); }
+  // After 2 seconds (hearts animation duration), show greeting text
+  setTimeout(()=> { greetingText.style.opacity = 1; }, 2200);
+});
+</script>
+</body>
+</html>
